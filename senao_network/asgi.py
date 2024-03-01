@@ -1,5 +1,5 @@
 """
-ASGI config for django_senao project.
+ASGI config for senao_network project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_senao.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'senao_network.settings')
 
 application = get_asgi_application()

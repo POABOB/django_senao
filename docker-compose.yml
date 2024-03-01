@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  redis:
+    image: redis:latest
+    command: redis-server /etc/redis/redis.conf # 啟動指令
+    volumes:
+      - ./compose/redis/redis.conf:/etc/redis/redis.conf # 掛載配置文件
+    ports:
+      - "6379:6379"
+    restart: always # 發生錯誤還是要重啟
+
+  web:
+    build: ./myproject
+    volumes:
+      - ./myproject:/var/www/html/myproject
+    ports:
+      - "8000:8000"
+    links:
+      - redis
+    depends_on:
+      - redis
+    restart: always

@@ -1,0 +1,14 @@
+# django
+django==4.2.10
+djangorestframework==3.14.0
+drf-yasg==1.21.7
+
+# uwsgi
+# uwsgi==2.0.18
+
+# mysql
+mysqlclient==1.4.6
+
+# redis
+django-redis==4.12.1
+redis==3.5.3

@@ -12,8 +12,16 @@ def custom_exception_handler(exc, context):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR, exception=True)
     else:
         msg = exc.args
+
         if len(exc.args) == 1:
             msg = exc.args[0]
+            if isinstance(msg, float):
+                return Response({
+                    'error': "Too Many Requests.",
+                }, status=response.status_code, exception=True)
+
+        if "non_field_errors" in msg:
+            msg = msg["non_field_errors"][0]
 
         return Response({
             'error': msg,

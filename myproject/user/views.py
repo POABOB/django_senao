@@ -56,6 +56,7 @@ class AuthViewSet(viewsets.ViewSet):
 
         # Cache get data
         if cache.get(data["username"]):
+            print("cached")
             raise serializers.ValidationError("User already exists.")
 
         # Check user whether is duplicate
@@ -74,7 +75,7 @@ class AuthViewSet(viewsets.ViewSet):
         # Cahce set data
         cache.set(
             key=user.username,
-            value=user.id,
+            value=user.password,
             timeout=60 * 5,  # in seconds (300s or 5min)
         )
 
@@ -119,16 +120,27 @@ class AuthViewSet(viewsets.ViewSet):
         times = cache.get(data["username"] + "_times")
         self.block_if_too_many_times(times)
 
-        # Filter
-        exists_user = User.objects.filter(username=data["username"])
-        # User is not existed.
-        if len(exists_user) == 0:
-            # Cache will count the error times
-            times = self.check_password_error_times(times, data)
-            raise serializers.ValidationError("Incorrect Username or Password.")
-        
+        # Cache
+        passwaord = cache.get(data["username"])
+        if passwaord is None:
+            print("no cached")
+            # Filter
+            exists_user = User.objects.filter(username=data["username"])
+            # User is not existed.
+            if len(exists_user) == 0:
+                # Cache will count the error times
+                times = self.check_password_error_times(times, data)
+                raise serializers.ValidationError("Incorrect Username or Password.")
+            
+            passwaord = exists_user[0].password
+            cache.set(
+                key=data["username"],
+                value=passwaord,
+                timeout=60 * 5,  # in seconds (5min)
+            )
+
         # User is existed, but password is incorrect.
-        if not check_password(data["password"], exists_user[0].password):
+        if not check_password(data["password"], passwaord):
             # Cache will count the error times
             times = self.check_password_error_times(times, data)
             raise serializers.ValidationError("Incorrect Username or Password.")

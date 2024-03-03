@@ -31,6 +31,10 @@ git clone https://github.com/POABOB/django_senao_network.git
 cd django_senao_network
 # 從範例配置中，複製一份本地執行的配置
 cp -R ./compose/redis/redis.conf.example ./compose/redis/redis.conf
+cp -R ./myproject/.env.example ./myproject/.env
+
+# 修改專案配置
+nano ./myproject/.env
 ```
 
 ### 執行
@@ -51,8 +55,6 @@ docker build -t <username>/senao_network:lastest ./myproject
 # 部署 Docker Hub，<username> 為登入後的使用者名稱
 docker push <username>/senao_network:lastest
 ```
-
-- Docker Hub Repo: https://hub.docker.com/repository/docker/poabob/senao_network/general
 
 ### 如果沒有安裝 Docker 或 Docker Compose?
 
@@ -115,6 +117,7 @@ sudo chmod +x /usr/local/bin/docker-compose
     ```
     ![錯誤輸入1](./images/signup_incorrect_input1.png)
     ![錯誤輸入1回應](./images/signup_incorrect_input1_response.png)
+    ![錯誤輸入1回應](./images/signup_incorrect_input1_1_response.png)
     - 密碼沒有只少一個大寫、一個小寫和一個數字
     ```json
     {
@@ -146,12 +149,8 @@ sudo chmod +x /usr/local/bin/docker-compose
     - 超過 5 次
     ![錯誤輸入2回應](./images/login_incorrect_input2_response.png)
 
-- 請求參數規格
-
-- 回應參數規格
-
 - Rate Limiter
-    - Each IP can send 30 requests in one minite to ensure the pressure of server is low.
+    - Each IP can send 30 requests in one minute to ensure the pressure of server is low.
     ![限流](./images/rate_limiter.png)
 
 - Cache

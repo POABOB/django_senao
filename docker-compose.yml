@@ -11,7 +11,8 @@ services:
     restart: always # 發生錯誤還是要重啟
 
   web:
-    build: ./myproject
+    # build: ./myproject
+    image: poabob/senao_network:lastest
     volumes:
       - ./myproject:/var/www/html/myproject
     ports:

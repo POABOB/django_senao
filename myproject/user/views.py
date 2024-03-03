@@ -8,12 +8,17 @@ from drf_yasg import openapi
 from django.db import transaction
 from user.serializers import AuthSerializer 
 from user.models import User
+from utils.throttle import VisitThrottle
 
 from django.contrib.auth.hashers import make_password, check_password
+from django.core.cache import cache
 import json
 
 # 登入、註冊的 ViewSet
 class AuthViewSet(viewsets.ViewSet):
+
+    throttle_classes = [VisitThrottle]
+
     @swagger_auto_schema(
         operation_summary='使用者註冊',
         tags=['Auth'],
@@ -49,13 +54,14 @@ class AuthViewSet(viewsets.ViewSet):
         serializer = AuthSerializer(data=data)
         serializer.is_valid(raise_exception=True)
 
+        # Cache get data
+        if cache.get(data["username"]):
+            raise serializers.ValidationError("User already exists.")
+
         # Check user whether is duplicate
         exists_user = User.objects.filter(username=data["username"])
         if len(exists_user) > 0:
             raise serializers.ValidationError("User already exists.")
-        
-        # TODO Redis count user mistakes in a specific time.
-
 
         # Encrypt
         user = User(username=data["username"], password=make_password(data["password"]))
@@ -64,6 +70,14 @@ class AuthViewSet(viewsets.ViewSet):
         # No user have same name
         with transaction.atomic():
             user.save()
+
+        # Cahce set data
+        cache.set(
+            key=user.username,
+            value=user.id,
+            timeout=60 * 5,  # in seconds (300s or 5min)
+        )
+
         return Response({}, status=status.HTTP_201_CREATED)
 
     @swagger_auto_schema(
@@ -101,12 +115,41 @@ class AuthViewSet(viewsets.ViewSet):
         serializer = AuthSerializer(data=data)
         serializer.is_valid(raise_exception=True)
 
+        # Cache get username if he/she input incorrect password over 5 times in 1 minutes.
+        times = cache.get(data["username"] + "_times")
+        self.block_if_too_many_times(times)
+
         # Filter
         exists_user = User.objects.filter(username=data["username"])
+        # User is not existed.
         if len(exists_user) == 0:
+            # Cache will count the error times
+            times = self.check_password_error_times(times, data)
             raise serializers.ValidationError("Incorrect Username or Password.")
+        
+        # User is existed, but password is incorrect.
         if not check_password(data["password"], exists_user[0].password):
+            # Cache will count the error times
+            times = self.check_password_error_times(times, data)
             raise serializers.ValidationError("Incorrect Username or Password.")
 
         return Response({}, status=status.HTTP_200_OK)
+    
+    # Count the error times
+    def check_password_error_times(self, times, data):
+        if times is None:
+            times = 1
+        else:
+            times = times + 1
+        
+        cache.set(
+            key=data["username"]+"_times",
+            value=times,
+            timeout=60 * 1,  # in seconds (1min)
+        )
+        self.block_if_too_many_times(times)
 
+    # Block
+    def block_if_too_many_times(self, times):
+        if times is not None and times >= 5:
+            raise serializers.ValidationError("Failed too many times, please wait one minute.")

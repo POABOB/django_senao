@@ -12,3 +12,6 @@ mysqlclient==1.4.6
 # redis
 django-redis==4.12.1
 redis==3.5.3
+
+# Debug
+django-debug-toolbar==4.3.0

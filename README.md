@@ -3,13 +3,21 @@ This is an interview project for Senao Network.
 
 - [x] Implement two RESTful HTTP APIs for creating and verifying an account and password, following the design requirements specified above.
 - [x] Use Python to implement the solution.
+    - Django and Django Restful Framework.
 - [x] Include error handling and input validation.
+    - Custom exception handling and serializers validation.
 - [x] Utilize appropriate data storage solutions.
+    - Use SQLite3 to store persistent data and use Redis to cache request data so the system can track error occurrences within specific time frames.
 - [x] Package the solution in a Docker container and push it to Docker Hub.
+    - Use Dockerfile to build this project as an image and Docker Compose to simply build a single node orchestration.
 - [x] Host the solution in a GitHub repository with the source code.
+    - https://github.com/POABOB/django_senao_network
+    - https://hub.docker.com/r/poabob/senao_network
 - [x] Provide a comprehensive API document with clear instructions on how to use the APIs, including sample request and response payloads.
-- [x] Provide a detailed user guide on how to run the container with Docker, including necessary commands and configurations. It is essential to provide clear and detailed instructions to ensure the container can be successfully run using
-Docker.
+    - Use Swagger (drf-yasg) to show the API document.
+- [x] Provide a detailed user guide on how to run the container with Docker, including necessary commands and configurations. It is essential to provide clear and detailed instructions to ensure the container can be successfully run using Docker.
+    - Please read README.md below, and here is a detail description.
+
 ## 如何啟動?
 
 ### 安裝
@@ -55,13 +63,6 @@ docker push <username>/senao_network:lastest
 #### Mac
 
 - 點擊官方網址 https://docs.docker.com/desktop/install/mac-install/ ，直接下載安裝
-
-<!-- - Docker Compose
-
-    使用 brew 安裝
-    ```bash
-    brew install docker-compose
-    ``` -->
 
 #### Linux (Ubuntu)
 
@@ -133,13 +134,26 @@ sudo chmod +x /usr/local/bin/docker-compose
     ```
     ![正確輸入](./images/login_correct_input.png)
     ![正確輸入回應](./images/login_correct_input_response.png)
-    - 輸入錯誤的帳密 5 次
+    - 輸入錯誤的帳密
     ```json
     {
         "username": "Bob",
         "password": "Aa123777777"
     }
     ```
+    ![錯誤輸1入](./images/login_incorrect_input1.png)
+    ![錯誤輸入1回應](./images/login_incorrect_input1_response.png)
+    - 超過 5 次
+    ![錯誤輸入2回應](./images/login_incorrect_input2_response.png)
+
 - 請求參數規格
 
 - 回應參數規格
+
+- Rate Limiter
+    - Each IP can send 30 requests in one minite to ensure the pressure of server is low.
+    ![限流](./images/rate_limiter.png)
+
+- Cache
+    - Cache can decrease the connections of DB.
+    

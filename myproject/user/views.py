@@ -21,6 +21,7 @@ class AuthViewSet(viewsets.ViewSet):
 
     @swagger_auto_schema(
         operation_summary='使用者註冊',
+        operation_description='註冊請注意，密碼至少需要一個大寫字母、一個小寫字母和一個數字來組成。',
         tags=['Auth'],
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,

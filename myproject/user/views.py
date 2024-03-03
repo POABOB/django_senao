@@ -20,8 +20,8 @@ class AuthViewSet(viewsets.ViewSet):
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
-                'username': openapi.Schema(type=openapi.TYPE_STRING, description='使用者名稱'),
-                'password': openapi.Schema(type=openapi.TYPE_STRING, description='密碼')
+                'username': openapi.Schema(type=openapi.TYPE_STRING, minLength=3, maxLength=32, description='使用者名稱'),
+                'password': openapi.Schema(type=openapi.TYPE_STRING, minLength=8, maxLength=32, description='密碼')
             },
             required=['username', 'password']
         ),
@@ -72,8 +72,8 @@ class AuthViewSet(viewsets.ViewSet):
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
-                'username': openapi.Schema(type=openapi.TYPE_STRING, description='使用者名稱'),
-                'password': openapi.Schema(type=openapi.TYPE_STRING, description='密碼')
+                'username': openapi.Schema(type=openapi.TYPE_STRING, minLength=3, maxLength=32, description='使用者名稱'),
+                'password': openapi.Schema(type=openapi.TYPE_STRING, minLength=8, maxLength=32, description='密碼')
             },
             required=['username', 'password']
         ),

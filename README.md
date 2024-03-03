@@ -21,7 +21,8 @@ git clone https://github.com/POABOB/django_senao_network.git
 - Redis Config
 ```bash
 cd django_senao_network
-mv ./compose/redis/redis.conf.example ./compose/redis/redis.conf
+# 從範例配置中，複製一份本地執行的配置
+cp -R ./compose/redis/redis.conf.example ./compose/redis/redis.conf
 ```
 
 ### 執行
@@ -36,10 +37,10 @@ docker-compose up
 # 登入 Docker Hub
 docker login
 
-# 打包映像欓
+# 打包映像欓，<username> 為登入後的使用者名稱
 docker build -t <username>/senao_network:lastest ./myproject
 
-# 部署 Docker Hub
+# 部署 Docker Hub，<username> 為登入後的使用者名稱
 docker push <username>/senao_network:lastest
 ```
 
@@ -88,8 +89,12 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 ### Swagger
 
-1. 執行 Django 專案
-1. 點擊 http://127.0.0.1/swagger ，進入 Restful API 的文檔。
+1. [執行 Django 專案](https://github.com/POABOB/django_senao_network?tab=readme-ov-file#%E5%9F%B7%E8%A1%8C)
+1. 點擊 http://127.0.0.1:8000/swagger/ ，進入 Restful API 的文檔。
+    - 畫面示意圖
+    ![API 文檔](./images/swgger.png)
+    - 可以查看特定 API 的規格
+    ![API 規格](./images/signup_detail.png)
 1. 點擊 signup - Try it，並輸入要註冊的帳號
     - 正確
     ```json
@@ -98,6 +103,8 @@ sudo chmod +x /usr/local/bin/docker-compose
         "password": "Aa123456"
     }
     ```
+    ![正確輸入](./images/signup_correct_input.png)
+    ![正確輸入回應](./images/signup_correct_input_response.png)
     - 帳號沒有在 3~32 位
     ```json
     {
@@ -105,13 +112,17 @@ sudo chmod +x /usr/local/bin/docker-compose
         "password": "Aa123456"
     }
     ```
+    ![錯誤輸入1](./images/signup_incorrect_input1.png)
+    ![錯誤輸入1回應](./images/signup_incorrect_input1_response.png)
     - 密碼沒有只少一個大寫、一個小寫和一個數字
     ```json
     {
         "username": "Alice",
-        "password": "1234"
+        "password": "A12345678"
     }
     ```
+    ![錯誤輸入2](./images/signup_incorrect_input2.png)
+    ![錯誤輸入2回應](./images/signup_incorrect_input2_response.png)
 1. 點擊 login - Try it，並輸入已被註冊的帳號
     - 正確
     ```json
@@ -120,6 +131,8 @@ sudo chmod +x /usr/local/bin/docker-compose
         "password": "Aa123456"
     }
     ```
+    ![正確輸入](./images/login_correct_input.png)
+    ![正確輸入回應](./images/login_correct_input_response.png)
     - 輸入錯誤的帳密 5 次
     ```json
     {

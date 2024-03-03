@@ -84,6 +84,7 @@ class AuthViewSet(viewsets.ViewSet):
 
     @swagger_auto_schema(
         operation_summary='使用者登入',
+        operation_description='登入請注意，如果輸入錯誤次數超過5次，將會被鎖定1分鐘。',
         tags=['Auth'],
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
